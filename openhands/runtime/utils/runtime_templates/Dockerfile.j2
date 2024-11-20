@@ -14,7 +14,7 @@ ENV POETRY_VIRTUALENVS_PATH=/openhands/poetry \
 
 # Install base system dependencies
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+    apt-get install -y --no-install-recommends build-essential\
         wget curl sudo apt-utils git \
         {% if 'ubuntu' in base_image and (base_image.endswith(':latest') or base_image.endswith(':24.04')) %}
         libgl1 \

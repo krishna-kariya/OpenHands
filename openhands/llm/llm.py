@@ -6,6 +6,7 @@ from functools import partial
 from typing import Any
 
 import requests
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
 from openhands.core.config import LLMConfig
 
@@ -70,6 +71,10 @@ FUNCTION_CALLING_SUPPORTED_MODELS = [
     'gpt-4o',
 ]
 
+identity = DefaultAzureCredential(
+    managed_identity_client_id='',
+)
+
 
 class LLM(RetryMixin, DebugMixin):
     """The LLM class represents a Language Model instance.
@@ -101,6 +106,12 @@ class LLM(RetryMixin, DebugMixin):
         # litellm actually uses base Exception here for unknown model
         self.model_info: ModelInfo | None = None
 
+        # token = azure_token_provider()
+        azure_token_provider = get_bearer_token_provider(
+            identity, 'https://cognitiveservices.azure.com/.default'
+        )
+        token = azure_token_provider()
+
         if self.config.log_completions:
             if self.config.log_completions_folder is None:
                 raise RuntimeError(
@@ -120,7 +131,13 @@ class LLM(RetryMixin, DebugMixin):
             temperature=self.config.temperature,
             top_p=self.config.top_p,
             drop_params=self.config.drop_params,
+            azure_ad_token=token,
+            # azure_ad_token_provider=azure_token_provider
         )
+
+        logger.debug(self.config.custom_llm_provider)
+        logger.debug(azure_token_provider)
+        logger.debug(token)
 
         if self.vision_is_active():
             logger.debug('LLM: model has vision enabled')
@@ -141,6 +158,8 @@ class LLM(RetryMixin, DebugMixin):
             temperature=self.config.temperature,
             top_p=self.config.top_p,
             drop_params=self.config.drop_params,
+            # azure_ad_token_provider=azure_token_provider
+            azure_ad_token=token,
         )
 
         with warnings.catch_warnings():

@@ -79,7 +79,10 @@ _FILE_EDIT_DESCRIPTION = """Edit a file.
 * IMPORTANT: For large files (e.g., > 300 lines), specify the range of lines to edit using `start` and `end` (1-indexed, inclusive). The range should be smaller than 300 lines.
 * To append to a file, set both `start` and `end` to `-1`.
 * If the file doesn't exist, a new file will be created with the provided content.
+"""
 
+_FILE_EDIT_LONG_DESCRIPTION = """
+Some additional notes for editing files:
 **Example 1: general edit for short files**
 For example, given an existing file `/path/to/file.py` that looks like this:
 (this is the end of the file)
@@ -191,9 +194,11 @@ LLMBasedFileEditTool = ChatCompletionToolParam(
                     'type': 'string',
                     'description': 'The absolute path to the file to be edited.',
                 },
-                'new_content_draft': {
+                'content': {
                     'type': 'string',
-                    'description': 'A draft of the new content for the file being edited. Note that the assistant may skip unchanged lines.',
+                    'description': 'A draft of the new content for the file being edited. Note that the assistant may skip unchanged lines.'
+                    + '\n Refer to following examples for more details. \n'
+                    + _FILE_EDIT_LONG_DESCRIPTION,
                 },
                 'start': {
                     'type': 'integer',
