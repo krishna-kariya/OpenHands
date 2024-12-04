@@ -43,6 +43,7 @@ class LLMConfig:
         log_completions: Whether to log LLM completions to the state.
         log_completions_folder: The folder to log LLM completions to. Required if log_completions is True.
         draft_editor: A more efficient LLM to use for file editing. Introduced in [PR 3985](https://github.com/All-Hands-AI/OpenHands/pull/3985).
+        azure_managed_identity_client_id: The client ID for the Azure managed identity. This is used for Azure OpenAI.
     """
 
     model: str = 'claude-3-5-sonnet-20241022'
@@ -77,6 +78,7 @@ class LLMConfig:
     log_completions: bool = False
     log_completions_folder: str = os.path.join(LOG_DIR, 'completions')
     draft_editor: Optional['LLMConfig'] = None
+    azure_managed_identity_client_id: str | None = None
 
     def defaults_to_dict(self) -> dict:
         """Serialize fields to a dict for the frontend, including type hints, defaults, and whether it's optional."""

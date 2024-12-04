@@ -71,10 +71,6 @@ FUNCTION_CALLING_SUPPORTED_MODELS = [
     'gpt-4o',
 ]
 
-identity = DefaultAzureCredential(
-    managed_identity_client_id='',
-)
-
 
 class LLM(RetryMixin, DebugMixin):
     """The LLM class represents a Language Model instance.
@@ -107,6 +103,9 @@ class LLM(RetryMixin, DebugMixin):
         self.model_info: ModelInfo | None = None
 
         # token = azure_token_provider()
+        identity = DefaultAzureCredential(
+            managed_identity_client_id=self.config.azure_managed_identity_client_id,
+        )
         azure_token_provider = get_bearer_token_provider(
             identity, 'https://cognitiveservices.azure.com/.default'
         )
